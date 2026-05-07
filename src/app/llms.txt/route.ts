@@ -22,15 +22,15 @@ ${docs
 
 ## MCP Server
 
-This documentation is available via Model Context Protocol (MCP) server at https://docs.pmnd.rs/api/sse
+This documentation is available via Model Context Protocol (MCP) server at https://docs.pmnd.rs/api/mcp
 
 Configure in your MCP client:
 \`\`\`json
 {
   "mcpServers": {
     "pmndrs": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/client-sse", "https://docs.pmnd.rs/api/sse"]
+      "type": "http",
+      "url": "https://docs.pmnd.rs/api/mcp"
     }
   }
 }
