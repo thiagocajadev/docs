@@ -81,6 +81,7 @@ export async function compileMdxContent(
     source,
     options: {
       mdxOptions: {
+        format: relFilePath.endsWith('.mdx') ? 'mdx' : 'md',
         remarkPlugins: [remarkGFM],
         rehypePlugins: [
           rehypeLink(process.env.BASE_PATH),

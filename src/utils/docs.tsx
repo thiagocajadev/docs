@@ -110,6 +110,7 @@ async function _getDocs(
         source: sanitizedContent,
         options: {
           mdxOptions: {
+            format: file.endsWith('.mdx') ? 'mdx' : 'md',
             rehypePlugins: [
               rehypeCodesandbox(boxes), // 1. put all Codesandbox[id] into `boxes`
             ],
