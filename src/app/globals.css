@@ -166,39 +166,7 @@ mark {
   @apply -m-(--pad) rounded-sm p-(--pad) [--pad:0.05rem];
 }
 
-/**
- * Pmndrs theme for JavaScript, CSS and HTML
- * Loosely based on https://marketplace.visualstudio.com/items?itemName=pmndrs.pmndrs
- * @author Paul Henschel
- */
-
-code[class*='language-'],
-pre[class*='language-'] {
-  text-align: left;
-  white-space: pre;
-  word-spacing: normal;
-  /* word-break: normal; */
-  /* word-wrap: normal; */
-  line-height: 1.5;
-  tab-size: 4;
-  hyphens: none;
-}
-
-/* Code blocks */
-pre[class*='language-'] {
-  --comment: #a6accd;
-  --punctuation: #e4f0fb;
-  --property: #e4f0fb;
-  --boolean: #5de4c7;
-  --string: #5de4c7;
-  --operator: #add7ff;
-  --function: #5de4c7;
-  --keyword: #add7ff;
-  --literal: #fffac2;
-  --falsy: #f087bd;
-  --linenumber-border-width: --spacing(1);
-  --pad: --spacing(6);
-}
+@import 'prism-themes/themes/prism-one-dark.css';
 
 /* Inline code */
 :not(pre) > code[class*='language-'] {
@@ -206,82 +174,9 @@ pre[class*='language-'] {
   white-space: normal;
 }
 
-.token.namespace {
-  opacity: 0.7;
-}
-
-.token.comment,
-.token.prolog,
-.token.doctype,
-.token.cdata {
-  color: var(--comment);
-}
-
-.token.punctuation {
-  color: var(--punctuation);
-}
-
-.token.property,
-.token.tag,
-.token.constant,
-.token.symbol,
-.token.deleted {
-  color: var(--property);
-}
-
-.token.boolean,
-.token.number {
-  color: var(--boolean);
-}
-
-.token.selector,
-.token.attr-value,
-.token.string,
-.token.char,
-.token.builtin,
-.token.inserted {
-  color: var(--string);
-}
-
-.token.attr-name,
-.token.operator,
-.token.entity,
-.token.url,
-.language-css .token.string,
-.style .token.string,
-.token.variable {
-  color: var(--operator);
-}
-
-.token.atrule,
-.token.function,
-.token.class-name {
-  color: var(--function);
-}
-
-.token.keyword {
-  color: var(--keyword);
-}
-
-.token.regex,
-.token.important {
-  color: var(--literal);
-}
-
-.token.deleted {
-  color: var(--falsy);
-}
-
-.token.important,
-.token.bold {
-  font-weight: bold;
-}
-.token.italic {
-  font-style: italic;
-}
-
-.token.entity {
-  cursor: help;
+pre[class*='language-'] {
+  --linenumber-border-width: --spacing(1);
+  --pad: --spacing(6);
 }
 
 /*
