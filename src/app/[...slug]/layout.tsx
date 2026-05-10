@@ -106,7 +106,6 @@ export default async function Layoutt({ params, children }: Props) {
                 </a>
               </p>
             )}
-
           </div>
         </div>
       )}
@@ -151,6 +150,33 @@ export default async function Layoutt({ params, children }: Props) {
           </div>
         </nav>
       )}
+
+      <p
+        className={cn(
+          'my-12 text-center text-sm',
+          'border-t border-outline-variant/30 pt-8 text-on-surface-variant/60',
+        )}
+      >
+        Desenvolvido por{' '}
+        <a
+          className="hover:underline"
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://github.com/thiagocajadev"
+        >
+          @thiagocajadev
+        </a>{' '}
+        · Fork baseado no repositório{' '}
+        <a
+          className="hover:underline"
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://github.com/pmndrs/docs"
+        >
+          pmndrs/docs · Poimandres
+        </a>
+        .
+      </p>
     </>
   )
 
