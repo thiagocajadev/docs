@@ -5,7 +5,7 @@ const staticPageGenerationTimeout = Number(process.env.STATIC_PAGE_GENERATION_TI
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  productionBrowserSourceMaps: true,
+  productionBrowserSourceMaps: false,
   staticPageGenerationTimeout,
   images: {
     // domains: ['codesandbox.io'],
