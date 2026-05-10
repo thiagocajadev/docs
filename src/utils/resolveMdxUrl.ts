@@ -17,6 +17,10 @@ export default function resolveMdxUrl(src: string, mdFile: string, baseUrl?: str
   // We remove the first character if it's a '/', to properly concatenate with the baseUrl
   const newUrlPath = resolvedPath.startsWith('/') ? resolvedPath.substring(1) : resolvedPath
 
-  // 5. Correctly append the path preserving the context of the baseUrl using WHATWG URL API
-  return new URL(newUrlPath, baseUrl + '/').href
+  // 5. Append to baseUrl: use WHATWG URL only when baseUrl is absolute, otherwise simple join
+  const isAbsoluteUrl = /^[a-z][a-z0-9+.-]*:\/\//i.test(baseUrl)
+  if (!isAbsoluteUrl) {
+    return baseUrl.replace(/\/+$/, '') + '/' + newUrlPath
+  }
+  return new URL(newUrlPath, baseUrl.replace(/\/+$/, '') + '/').href
 }

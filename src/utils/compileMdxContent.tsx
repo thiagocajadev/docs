@@ -48,6 +48,7 @@ import { compileMDX } from 'next-mdx-remote/rsc'
 import { dirname } from 'node:path'
 import { refractor } from 'refractor/all'
 import rehypePrismPlus from 'rehype-prism-plus'
+import rehypeRaw from 'rehype-raw'
 import remarkGFM from 'remark-gfm'
 
 /**
@@ -78,13 +79,17 @@ export async function compileMdxContent(
   tableOfContents: DocToC[],
   entries: Entry[],
 ) {
+  const isMdx = relFilePath.endsWith('.mdx')
   return await compileMDX({
     source,
     options: {
       mdxOptions: {
-        format: relFilePath.endsWith('.mdx') ? 'mdx' : 'md',
+        format: isMdx ? 'mdx' : 'md',
         remarkPlugins: [remarkGFM],
         rehypePlugins: [
+          // parse raw HTML in .md (e.g. <details><summary>) into element nodes;
+          // skip for .mdx since rehype-raw chokes on MDX JSX nodes
+          ...(isMdx ? [] : [rehypeRaw]),
           rehypeLink(process.env.BASE_PATH),
           rehypeImg(relFilePath, baseUrl),
           rehypeDetails,

@@ -107,18 +107,6 @@ export default async function Layoutt({ params, children }: Props) {
               </p>
             )}
 
-            {!!currentPage && (
-              <p>
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={cn('mb-2 text-base hover:underline', 'text-on-surface-variant/50')}
-                  href={currentPage.editURL || '#no-edit-url'}
-                >
-                  Edit this page
-                </a>
-              </p>
-            )}
           </div>
         </div>
       )}
