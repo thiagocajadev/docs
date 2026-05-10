@@ -168,7 +168,18 @@ mark {
 
 @import 'prism-themes/themes/prism-one-dark.css';
 
-/* Binaryify One Dark Pro tweak: red variables/parameters (instead of blue) */
+/* Binaryify One Dark Pro tweak: untokenized identifiers (variable usages) in red */
+code[class*='language-'],
+pre[class*='language-'] {
+  color: #e06c75;
+}
+
+/* Keep punctuation in the neutral gray */
+.token.punctuation {
+  color: #abb2bf;
+}
+
+/* Variables/parameters explicitly red */
 .token.variable,
 .token.parameter {
   color: #e06c75;
