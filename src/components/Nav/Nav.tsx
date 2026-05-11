@@ -1,10 +1,9 @@
 import { Doc } from '@/app/[...slug]/DocsContext'
 import cn from '@/lib/cn'
 import * as React from 'react'
+import { buildNavTree } from './buildNavTree'
 import { NavCategory } from './NavCategory'
 import { NavCategoryCollapsible } from './NavCategoryCollapsible'
-
-type NavList = Record<string, Record<string, Doc>>
 
 export function Nav({
   className,
@@ -16,33 +15,19 @@ export function Nav({
   asPath: string
   collapsible: boolean
 }) {
-  const nav = React.useMemo(
-    () =>
-      docs.reduce((acc, doc) => {
-        const page = doc.slug.at(-1)
-        const category = doc.slug.at(-2) || 'root'
-
-        acc[category] ??= {}
-        if (page) acc[category][page] = doc
-
-        return acc
-      }, {} as NavList),
-    [docs],
-  )
+  const tree = React.useMemo(() => buildNavTree(docs), [docs])
 
   return (
     <ul className={cn(className, '')}>
-      {Object.entries(nav).map(([category, docs]) => {
-        return (
-          <li key={category}>
-            {collapsible ? (
-              <NavCategoryCollapsible {...{ category, docs, asPath }} />
-            ) : (
-              <NavCategory {...{ category, docs, asPath }} />
-            )}
-          </li>
-        )
-      })}
+      {tree.map((node) => (
+        <li key={node.name}>
+          {collapsible ? (
+            <NavCategoryCollapsible node={node} asPath={asPath} depth={0} />
+          ) : (
+            <NavCategory node={node} asPath={asPath} depth={0} />
+          )}
+        </li>
+      ))}
     </ul>
   )
 }

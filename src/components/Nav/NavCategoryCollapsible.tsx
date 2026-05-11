@@ -1,30 +1,28 @@
 'use client'
 
-import { Doc } from '@/app/[...slug]/DocsContext'
 import cn from '@/lib/cn'
 import * as Collapsible from '@radix-ui/react-collapsible'
+import Link from 'next/link'
 import { ComponentProps, useEffect, useState } from 'react'
 import { IoIosArrowDown } from 'react-icons/io'
-
-import Link from 'next/link'
-
-const INDEX_PAGE = 'introduction'
+import { NavTreeNode, nodeContainsUrl, nodeFirstHref } from './buildNavTree'
 
 export function NavCategoryCollapsible({
-  category,
-  docs,
+  node,
   asPath,
+  depth,
 }: {
-  category: string
-  docs: Record<string, Doc>
+  node: NavTreeNode
   asPath: string
+  depth: number
 }) {
-  const docsEntries = Object.entries(docs)
+  const currentUrl = `/${asPath}`
+  const hasChildren = node.children.length > 0
+  const href = node.doc?.url ?? node.indexDoc?.url ?? nodeFirstHref(node) ?? '#'
+  const active = node.doc?.url === currentUrl || node.indexDoc?.url === currentUrl
+  const containsCurrent = nodeContainsUrl(node, currentUrl)
 
-  const docIndexEntry = docsEntries.find(([page]) => page === INDEX_PAGE)
-  const categoryHref = docIndexEntry ? docIndexEntry[1].url : docsEntries[0][1].url
-
-  const [open, setOpen] = useState(docsEntries.some(([, doc]) => doc.url === `/${asPath}`))
+  const [open, setOpen] = useState(containsCurrent)
 
   useEffect(() => {
     const dur = '.2s'
@@ -32,44 +30,52 @@ export function NavCategoryCollapsible({
     document.documentElement.style.setProperty('--collapsible-up-duration', dur)
   }, [])
 
-  const nonIndexItems = docsEntries.filter(([page]) => page !== INDEX_PAGE)
+  const isFolder = hasChildren || !!node.indexDoc
+
+  const label = (
+    <NavItem
+      href={href}
+      depth={depth}
+      active={active}
+      className={cn(
+        isFolder ? 'capitalize tracking-wide' : 'text-xs',
+        depth === 0 && isFolder && 'font-semibold',
+      )}
+    >
+      {formatName(node.name)}
+    </NavItem>
+  )
+
+  if (!hasChildren) {
+    return <div className="text-sm [--NavItem-pad:.75rem]">{label}</div>
+  }
 
   return (
     <Collapsible.Root
       className={cn(
         'text-sm [--NavItem-pad:.75rem] [--arrow-size:--spacing(4)]',
-        !docsEntries.some(([, doc]) => doc.url === `/${asPath}`) && 'opacity-50',
+        depth === 0 && !containsCurrent && 'opacity-50',
       )}
       open={open}
       onOpenChange={setOpen}
     >
       <div className="relative">
-        <NavItem
-          href={categoryHref}
-          className={cn('capitalize tracking-wide', 'flex items-center gap-3')}
-          active={docIndexEntry && categoryHref === `/${asPath}`}
+        {label}
+        <Collapsible.Trigger
+          asChild
+          className={cn('absolute right-0 top-1/2 transition-transform', open && 'rotate-90')}
         >
-          {category.replace(/\-/g, ' ')}
-        </NavItem>
-        {nonIndexItems.length > 0 && (
-          <Collapsible.Trigger
-            asChild
-            className={cn('absolute right-0 top-1/2 transition-transform', open && 'rotate-90')}
-          >
-            <div className="-translate-y-1/2 p-(--NavItem-pad)">
-              <IoIosArrowDown className="size-(--arrow-size) -rotate-90" />
-            </div>
-          </Collapsible.Trigger>
-        )}
+          <div className="-translate-y-1/2 p-(--NavItem-pad)">
+            <IoIosArrowDown className="size-(--arrow-size) -rotate-90" />
+          </div>
+        </Collapsible.Trigger>
       </div>
 
       <Collapsible.Content className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
         <ul>
-          {nonIndexItems.map(([page, doc]) => (
-            <li key={page}>
-              <NavItem href={doc.url} active={doc.url === `/${asPath}`} className="text-xs">
-                {doc.title}
-              </NavItem>
+          {node.children.map((child) => (
+            <li key={child.name}>
+              <NavCategoryCollapsible node={child} asPath={asPath} depth={depth + 1} />
             </li>
           ))}
         </ul>
@@ -78,19 +84,24 @@ export function NavCategoryCollapsible({
   )
 }
 
+function formatName(name: string): string {
+  return name.replace(/-/g, ' ')
+}
+
 function NavItem({
   children,
   className,
   active,
+  depth,
+  style,
   ...props
-}: {
-  active?: boolean
-} & ComponentProps<typeof Link>) {
+}: { active?: boolean; depth: number } & ComponentProps<typeof Link>) {
   return (
     <Link
       {...props}
+      style={{ paddingLeft: `calc(var(--rgrid-m) + ${depth} * 0.75rem)`, ...style }}
       className={cn(
-        'block cursor-pointer rounded-r-xl p-(--NavItem-pad) pl-(--rgrid-m) pr-[calc(2*var(--NavItem-pad)+var(--arrow-size))]',
+        'block cursor-pointer rounded-r-xl p-(--NavItem-pad) pr-[calc(2*var(--NavItem-pad)+var(--arrow-size))]',
         active ? 'bg-primary-container' : 'bg-surface',
         className,
       )}

@@ -50,7 +50,7 @@ export default async function Layoutt({ params, children }: Props) {
         </Link>
         {NEXT_PUBLIC_LIBNAME_DOTSUFFIX_LABEL ? (
           <span className="font-normal">
-            .
+            {' · '}
             {NEXT_PUBLIC_LIBNAME_DOTSUFFIX_HREF ? (
               <a href={NEXT_PUBLIC_LIBNAME_DOTSUFFIX_HREF}>{NEXT_PUBLIC_LIBNAME_DOTSUFFIX_LABEL}</a>
             ) : (

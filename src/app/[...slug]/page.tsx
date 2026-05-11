@@ -10,7 +10,7 @@ export async function generateMetadata({ params }: Props) {
 
   const { doc } = await getData(...slug)
 
-  const title = `${doc.metadata.title} - ${process.env.NEXT_PUBLIC_LIBNAME}`
+  const title = `${doc.metadata.title} · ${process.env.NEXT_PUBLIC_LIBNAME}`
   const description = doc.metadata.description
   const url = doc.url
   const image = doc.image

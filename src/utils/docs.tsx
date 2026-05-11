@@ -17,6 +17,8 @@ export const MARKDOWN_REGEX = /\.mdx?/
  */
 const INLINE_LINK_REGEX = /<(http[^>]+)>/g
 
+const capitalizeFirst = (s: string) => (s.length > 0 ? s[0].toUpperCase() + s.slice(1) : s)
+
 /**
  * Recursively crawls a directory, returning an array of file paths.
  */
@@ -51,7 +53,7 @@ export async function parseDocsMetadata(root: string) {
       const frontmatter = compiled.data
       const content = compiled.content
 
-      const title: string = frontmatter.title?.trim() ?? slug[slug.length - 1].replace(/\-/g, ' ')
+      const title: string = frontmatter.title?.trim() ?? capitalizeFirst(slug[slug.length - 1].replace(/\-/g, ' '))
       const description: string = frontmatter.description ?? ''
       const nav: number = frontmatter.nav ?? Infinity
 
