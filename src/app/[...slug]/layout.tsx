@@ -2,13 +2,14 @@ import * as React from 'react'
 
 import { Layout, LayoutAside, LayoutContent, LayoutHeader, LayoutNav } from '@/components/Layout'
 import { Nav } from '@/components/Nav'
-import { buildNavTree, flattenNavTree } from '@/components/Nav/buildNavTree'
+import { buildNavSections, flattenNavSections } from '@/components/Nav/buildNavTree'
 import { ScrollToTopOnNavigate } from '@/components/ScrollToTopOnNavigate'
 import Search from '@/components/Search'
 import { Toc } from '@/components/mdx/Toc'
 import { ToggleTheme } from '@/components/ToggleTheme'
 import cn from '@/lib/cn'
 import { getData } from '@/utils/docs'
+import { parseNavLabels, parseNavOrder } from '@/utils/navOrder'
 import Link from 'next/link'
 import { PiDiscordLogoLight } from 'react-icons/pi'
 import { VscGithubAlt } from 'react-icons/vsc'
@@ -26,7 +27,10 @@ export default async function Layoutt({ params, children }: Props) {
 
   const asPath = slug.join('/')
 
-  const orderedDocs = flattenNavTree(buildNavTree(docs))
+  const navOrder = parseNavOrder(process.env.NAV_ORDER)
+  const navLabels = parseNavLabels(process.env.NAV_LABELS)
+
+  const orderedDocs = flattenNavSections(buildNavSections(docs, navOrder))
   const currentPageIndex = orderedDocs.findIndex(({ url }) => url === `/${asPath}`)
   const currentPage = orderedDocs[currentPageIndex]
   const previousPage = currentPageIndex > 0 && orderedDocs[currentPageIndex - 1]
@@ -40,7 +44,9 @@ export default async function Layoutt({ params, children }: Props) {
   const NEXT_PUBLIC_LIBNAME_DOTSUFFIX_LABEL = process.env.NEXT_PUBLIC_LIBNAME_DOTSUFFIX_LABEL
   const NEXT_PUBLIC_LIBNAME_DOTSUFFIX_HREF = process.env.NEXT_PUBLIC_LIBNAME_DOTSUFFIX_HREF
 
-  const nav = <Nav docs={docs} asPath={asPath} collapsible />
+  const nav = (
+    <Nav docs={docs} asPath={asPath} collapsible navOrder={navOrder} navLabels={navLabels} />
+  )
   const header = (
     <div className="flex h-(--header-height) items-center gap-(--rgrid-m) px-(--rgrid-m)">
       <div className="flex items-center gap-2">
@@ -101,7 +107,13 @@ export default async function Layoutt({ params, children }: Props) {
             )}
             <ToggleTheme className="flex size-9 items-center justify-center" />
           </div>
-          <Nav docs={docs} asPath={asPath} collapsible={false} />
+          <Nav
+            docs={docs}
+            asPath={asPath}
+            collapsible={false}
+            navOrder={navOrder}
+            navLabels={navLabels}
+          />
         </Menu>
       </div>
     </div>

@@ -43,11 +43,12 @@ export function NavCategoryCollapsible({
       active={active}
       onClick={hasChildren ? () => setOpen(true) : undefined}
       className={cn(
-        isFolder ? 'capitalize tracking-wide' : 'text-xs',
+        isFolder ? 'tracking-wide' : 'text-xs',
+        isFolder && !node.label && 'capitalize',
         depth === 0 && isFolder && 'font-semibold',
       )}
     >
-      {formatName(node.name)}
+      {node.label ?? formatName(node.name)}
     </NavItem>
   )
 

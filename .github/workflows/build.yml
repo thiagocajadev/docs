@@ -22,6 +22,12 @@ on:
         required: true
         type: string
         default: '/getting-started/introduction'
+      nav_order:
+        type: string
+        description: 'optional sidebar order, as YAML. Flat: `javascript csharp sql`, or grouped by label: `Programação: javascript csharp`. Folders left out keep the default (alphabetical) order, at the end'
+      nav_labels:
+        type: string
+        description: 'optional sidebar display names, as a YAML `slug: Label` mapping, for names the default capitalization gets wrong, eg: `sql: SQL`'
       icon:
         type: string
         default: '🖨️'
@@ -90,6 +96,8 @@ jobs:
             -e DIST_DIR \
             -e OUTPUT \
             -e HOME_REDIRECT \
+            -e NAV_ORDER \
+            -e NAV_LABELS \
             -e MDX_BASEURL \
             -e SOURCECODE_BASEURL \
             -e EDIT_BASEURL \
@@ -118,6 +126,8 @@ jobs:
           DIST_DIR: '${{ inputs.mdx }}/out${{ steps.set-base-path.outputs.BASE_PATH }}'
           OUTPUT: 'export'
           HOME_REDIRECT: ${{ inputs.home_redirect }}
+          NAV_ORDER: ${{ inputs.nav_order }}
+          NAV_LABELS: ${{ inputs.nav_labels }}
           MDX_BASEURL: 'https://github.com/${{ github.repository }}/raw/${{ github.head_ref || github.ref_name }}/${{ inputs.mdx }}'
           SOURCECODE_BASEURL: 'https://github.com/${{ github.repository }}/tree/${{ github.head_ref || github.ref_name }}'
           EDIT_BASEURL: 'https://github.com/${{ github.repository }}/edit/${{ github.head_ref || github.ref_name }}/${{ inputs.mdx }}'

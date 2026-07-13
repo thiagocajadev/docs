@@ -25,11 +25,12 @@ export function NavCategory({
         depth={depth}
         active={active}
         className={cn(
-          isFolder ? 'capitalize tracking-wide' : 'text-xs',
+          isFolder ? 'tracking-wide' : 'text-xs',
+          isFolder && !node.label && 'capitalize',
           depth === 0 && isFolder && 'font-bold',
         )}
       >
-        {node.name.replace(/-/g, ' ')}
+        {node.label ?? node.name.replace(/-/g, ' ')}
       </NavItem>
 
       {hasChildren && (

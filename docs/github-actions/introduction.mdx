@@ -33,3 +33,58 @@ uses: pmndrs/docs/.github/workflows/build.yml@v2
 ```
 
 See [`pmndrs/react-three-fiber/.github/workflows/docs.yml`](https://github.com/pmndrs/react-three-fiber/blob/master/.github/workflows/docs.yml) for an example implementation.
+
+## Sidebar order
+
+By default the sidebar lists folders alphabetically (pages inside a folder are ordered by their
+`nav` frontmatter). The optional `nav_order` input takes over, in YAML.
+
+To simply set the order, list the folders — first one wins the top spot:
+
+```yml
+with:
+  nav_order: 'javascript typescript csharp sql shared'
+```
+
+To split the sidebar into labelled groups, use one key per group. Nesting a folder under its own
+key orders that folder's children too:
+
+```yml
+with:
+  nav_order: |
+    Estrutura:
+      - getting-started
+      - shared
+    Programação:
+      - javascript:
+          - setup
+          - conventions
+          - frameworks
+      - typescript
+      - csharp
+    Banco de Dados: sql
+```
+
+Names are folder/page names, as they appear in the URL (`quick-reference`, not `Quick reference`).
+
+Anything you leave out keeps its default order, listed after the entries you did order — so a new
+folder still shows up in the sidebar without touching the config. The `Previous`/`Next` links at
+the bottom of each page follow the same order.
+
+## Sidebar labels
+
+Folder names are capitalized from their slug, which gets acronyms wrong: `sql` renders as `Sql`,
+`css` as `Css`. The optional `nav_labels` input sets the displayed name, keyed by slug:
+
+```yml
+with:
+  nav_labels: |
+    sql: SQL
+    css: CSS
+    html: HTML
+    javascript: JavaScript
+    csharp: C#
+```
+
+A slug you don't list keeps the default capitalization. Only the sidebar text changes — URLs still
+use the folder name (`/sql/readme`).
