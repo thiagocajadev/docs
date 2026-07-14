@@ -130,17 +130,20 @@ jobs:
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
 
-      - name: git tags
+      - name: git tag
         if: steps.check.outputs.changed == 'true'
         run: |
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git config --global user.name "${{ github.actor }}"
 
           VERSION=${{ steps.check.outputs.version }}
-          MAJOR_VERSION=${{ steps.check.outputs.major_version }}
 
-          # vX.Y.Z pins a release; vX is what build.yml's `docker_tag` default tracks.
+          # The tag exists to answer one question: is this version released? Only the newest one can
+          # ever answer it, so the older tags are dropped. Consumers pin the Docker image tag, not
+          # this repository, and the reusable workflow is referenced at `@main`.
           git tag -fa v$VERSION -m "Update version tag to v$VERSION"
-          git tag -fa v$MAJOR_VERSION -m "Update major version tag to v$MAJOR_VERSION"
+          git push origin v$VERSION --force
 
-          git push origin v$MAJOR_VERSION v$VERSION --force
+          for OLD_TAG in $(git tag -l 'v*' | grep -vx "v$VERSION"); do
+            git push origin --delete "$OLD_TAG"
+          done
