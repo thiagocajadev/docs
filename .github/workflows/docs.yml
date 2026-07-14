@@ -1,4 +1,7 @@
-name: Build documentation and deploy to GitHub Pages
+# Publishes DoDocs' own manual (the `docs/` folder of this repo), built by DoDocs itself.
+# It has nothing to do with the docs of any project that *uses* DoDocs -- those are built by the
+# consuming repository's own workflow, when that repository is pushed to.
+name: DoDocs docs site
 on:
   push:
     branches: ['main']
@@ -24,7 +27,8 @@ jobs:
       libname_dotsuffix_label: 'docs'
       libname_dotsuffix_href: 'https://github.com/thiagocajadev/do-docs'
       home_redirect: '/getting-started/introduction'
-      locale: 'pt-BR'
+      # The manual itself is written in English, so the chrome matches it.
+      locale: 'en'
       icon: '🖨️'
       logo: 'gutenberg.jpg'
       github: 'https://github.com/thiagocajadev/do-docs'
