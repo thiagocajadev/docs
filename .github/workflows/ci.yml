@@ -60,26 +60,32 @@ jobs:
       #  ██  ██  ██      ██   ██      ██ ██ ██    ██ ██  ██ ██
       #   ████   ███████ ██   ██ ███████ ██  ██████  ██   ████
       #
-      # Releases are cut by bumping `version` in package.json: the check below detects it, and the
-      # Docker publish + git tags are gated on it. Every other push just builds and tests.
+      # Releases are cut by bumping `version` in package.json. A version is unreleased while no
+      # `v<version>` tag points at it, which is what the check below asks.
+      #
+      # It reads the repo, not the event payload, so it behaves the same on a push and on a manual
+      # run, and re-running a job never republishes. (The previous EndBug/version-check walked
+      # `payload.commits`, which does not exist on workflow_dispatch, and crashed there.)
       #
 
-      - name: Check version bump
+      - name: Check whether this version is released
         id: check
-        uses: EndBug/version-check@v2
-        with:
-          diff-search: true
-
-      - id: get-version
-        if: steps.check.outputs.changed == 'true'
         run: |
-          VERSION="${{ steps.check.outputs.version }}"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          set -e
 
-          MAJOR_VERSION=$(echo "$VERSION" | cut -d. -f1)
-          echo "major_version=$MAJOR_VERSION" >> $GITHUB_OUTPUT
+          VERSION=$(node -p "require('./package.json').version")
+          MAJOR_VERSION=${VERSION%%.*}
 
-          echo "Using version: $VERSION (major: $MAJOR_VERSION)"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "major_version=$MAJOR_VERSION" >> "$GITHUB_OUTPUT"
+
+          if git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "v$VERSION is already tagged: nothing to publish."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "v$VERSION has no tag yet: publishing image and tags."
+          fi
 
       #
       # ██████   ██████   ██████ ██   ██ ███████ ██████
@@ -105,8 +111,8 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest
-            type=raw,value=${{ steps.get-version.outputs.major_version }}
-            type=raw,value=${{ steps.get-version.outputs.version }}
+            type=raw,value=${{ steps.check.outputs.major_version }}
+            type=raw,value=${{ steps.check.outputs.version }}
 
       - uses: docker/build-push-action@v6
         id: push
@@ -130,8 +136,8 @@ jobs:
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git config --global user.name "${{ github.actor }}"
 
-          VERSION=${{ steps.get-version.outputs.version }}
-          MAJOR_VERSION=${{ steps.get-version.outputs.major_version }}
+          VERSION=${{ steps.check.outputs.version }}
+          MAJOR_VERSION=${{ steps.check.outputs.major_version }}
 
           # vX.Y.Z pins a release; vX is what build.yml's `docker_tag` default tracks.
           git tag -fa v$VERSION -m "Update version tag to v$VERSION"
