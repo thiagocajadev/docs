@@ -105,7 +105,7 @@ One practical difference: in `.md`, writing `<div>` produces a real `div`. In `.
 - **Navigation built from your folders.** Folders become sections, files become pages. Ordering, grouping and display names can be adjusted with `nav_order` and `nav_labels`, but they are optional.
 - **Search** across all pages, running in the browser. There is no search service to host.
 - **Themes** generated from one accent color, with a light/dark/system switch.
-- **Code blocks** with syntax highlighting, plus editable sandboxes.
+- **Code blocks** with syntax highlighting, plus a copy to clipboard button.
 - **Interface in English or Portuguese.** Your content is never translated.
 - **Static output**, which you can publish to GitHub Pages, Vercel, or any static host.
 

@@ -105,7 +105,7 @@ Uma diferença prática: em `.md`, escrever `<div>` produz uma `div` de verdade.
 - **Navegação montada a partir das suas pastas.** Pastas viram seções, arquivos viram páginas. A ordem, o agrupamento e os nomes exibidos podem ser ajustados com `nav_order` e `nav_labels`, mas são opcionais.
 - **Busca** em todas as páginas, rodando no navegador. Não há serviço de busca para hospedar.
 - **Temas** gerados a partir de uma única cor de destaque, com alternância entre claro, escuro e sistema.
-- **Blocos de código** com destaque de sintaxe, além de sandboxes editáveis.
+- **Blocos de código** com destaque de sintaxe, além de um botão de copiar para a área de transferência.
 - **Interface em inglês ou português.** Seu conteúdo nunca é traduzido.
 - **Saída estática**, que você publica no GitHub Pages, na Vercel ou em qualquer host estático.
 
