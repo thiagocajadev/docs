@@ -17,6 +17,14 @@ You give DoDocs a folder of `.md`/`.mdx` files. It returns a static website with
 
 The folder structure defines the site structure. Folders become sidebar sections and files become pages. Your documentation stays as plain Markdown, versioned in the same repository as your code.
 
+<p align="center">
+  <kbd><img src=".github/assets/dodocs-example-page.png" alt="A page built by DoDocs, with the sidebar, the search box and the table of contents" /></kbd>
+</p>
+
+<p align="center">
+  <sub>The <code>example/</code> folder of this repository, rendered. Run <code>pnpm dev</code> to get this.</sub>
+</p>
+
 ---
 
 ## Quick reference

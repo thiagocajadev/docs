@@ -17,6 +17,14 @@ Você entrega ao DoDocs uma pasta com arquivos Markdown. Ele devolve um site est
 
 A estrutura das pastas define a estrutura do site. Pastas viram seções da barra lateral e arquivos viram páginas. Sua documentação continua sendo Markdown puro, versionada no mesmo repositório do código.
 
+<p align="center">
+  <kbd><img src=".github/assets/dodocs-example-page.png" alt="Uma página construída pelo DoDocs, com a barra lateral, a busca e o sumário" /></kbd>
+</p>
+
+<p align="center">
+  <sub>A pasta <code>example/</code> deste repositório, renderizada. Rode <code>pnpm dev</code> para chegar nisso. A interface aparece em inglês porque esse é o padrão; com <code>locale: pt-BR</code> ela fica em português.</sub>
+</p>
+
 ---
 
 ## Referência rápida
