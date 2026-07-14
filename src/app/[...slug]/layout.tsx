@@ -9,9 +9,10 @@ import { Toc } from '@/components/mdx/Toc'
 import { ToggleTheme } from '@/components/ToggleTheme'
 import { t } from '@/i18n'
 import cn from '@/lib/cn'
-import { getData } from '@/utils/docs'
+import { folderRedirect, getData } from '@/utils/docs'
 import { parseNavLabels, parseNavOrder } from '@/utils/navOrder'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { PiDiscordLogoLight } from 'react-icons/pi'
 import { VscGithubAlt } from 'react-icons/vsc'
 import { type DocEntry } from './DocsContext'
@@ -27,6 +28,11 @@ export type Props = {
 
 export default async function Layoutt({ params, children }: Props) {
   const { slug } = await params
+
+  // A folder with no page of its own sends the reader to the first page inside it.
+  const target = await folderRedirect(...slug)
+  if (target) redirect(target)
+
   const { docs: fullDocs, doc } = await getData(...slug)
 
   // The nav is a client component, so it only gets what it reads. See DocEntry: passing

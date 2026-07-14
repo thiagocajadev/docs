@@ -282,3 +282,52 @@ async function _getData(...slug: string[]) {
   }
 }
 export const getData = cache(_getData)
+
+/**
+ * Where a folder should land when it has no page of its own.
+ *
+ * `docs/sql/conventions/` holds pages but is not a page, so `/sql/conventions` had nowhere to go and
+ * 404'd -- even though the sidebar already sends you to the first page inside it. Markdown that
+ * links to a folder (`[conventions/](../conventions/)`) hit the same dead end.
+ *
+ * Returns null when the slug is already a page, or holds nothing.
+ */
+async function _folderRedirect(...slug: string[]): Promise<string | null> {
+  const { MDX } = process.env
+  if (!MDX) return null
+
+  const url = `/${slug.join('/')}`.toLowerCase()
+  const docs = await parseDocsMetadata(MDX)
+
+  if (docs.some((doc) => doc.url === url)) return null
+
+  const inside = docs.filter((doc) => doc.url.startsWith(`${url}/`))
+  if (inside.length === 0) return null
+
+  // Same order the sidebar walks: a page sitting directly in the folder beats one nested deeper,
+  // then `nav`, then alphabetical.
+  inside.sort(
+    (a, b) =>
+      a.slug.length - b.slug.length || a.nav - b.nav || a.url.localeCompare(b.url),
+  )
+
+  return inside[0].url
+}
+export const folderRedirect = cache(_folderRedirect)
+
+/** Every folder that holds pages but is not one itself, as a slug. */
+export async function getFolderSlugs(root: string): Promise<string[][]> {
+  const docs = await parseDocsMetadata(root)
+  const pages = new Set(docs.map((doc) => doc.url))
+  const folders = new Set<string>()
+
+  for (const { slug } of docs) {
+    // Every prefix of a page's slug is a folder, except the page itself.
+    for (let i = 1; i < slug.length; i++) {
+      const url = `/${slug.slice(0, i).join('/')}`
+      if (!pages.has(url)) folders.add(slug.slice(0, i).join('/'))
+    }
+  }
+
+  return [...folders].map((folder) => folder.split('/'))
+}

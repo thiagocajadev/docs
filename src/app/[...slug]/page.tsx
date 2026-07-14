@@ -1,6 +1,7 @@
 import { t } from '@/i18n'
 import cn from '@/lib/cn'
-import { getData, getDocs } from '@/utils/docs'
+import { folderRedirect, getData, getDocs, getFolderSlugs } from '@/utils/docs'
+import { redirect } from 'next/navigation'
 
 export type Props = {
   params: Promise<{ slug: string[] }>
@@ -8,6 +9,9 @@ export type Props = {
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
+
+  // A folder route only redirects, so it has no metadata of its own.
+  if (await folderRedirect(...slug)) return {}
 
   const { doc } = await getData(...slug)
 
@@ -36,6 +40,9 @@ export default async function Page({ params }: Props) {
   // console.log('page', params)
 
   const { slug } = await params
+
+  const target = await folderRedirect(...slug)
+  if (target) redirect(target)
 
   const { doc } = await getData(...slug) // [ 'getting-started', 'introduction' ]
 
@@ -87,7 +94,10 @@ export async function generateStaticParams() {
   }
 
   const docs = await getDocs(MDX, null, true)
-  const paths = docs.map(({ slug }) => ({ slug }))
-  // console.log('paths', paths)
-  return paths
+
+  // Folders that hold pages but are not pages themselves get a route too, so `/sql/conventions`
+  // redirects instead of 404ing.
+  const folders = await getFolderSlugs(MDX)
+
+  return [...docs.map(({ slug }) => ({ slug })), ...folders.map((slug) => ({ slug }))]
 }
